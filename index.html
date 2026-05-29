@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>배달 앱 라이더 배차 시스템 (OOP 다형성 시각화)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* 트리를 연결하는 선을 그리기 위한 CSS */
+        .tree-line::before {
+            content: '';
+            position: absolute;
+            top: -24px;
+            left: 50%;
+            width: 2px;
+            height: 24px;
+            background-color: #cbd5e1;
+        }
+        .tree-connector::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 16.66%;
+            width: 66.66%;
+            height: 2px;
+            background-color: #cbd5e1;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans p-8">
+
+    <div class="max-w-4xl mx-auto">
+        <header class="text-center mb-10">
+            <h1 class="text-3xl font-bold text-blue-600 mb-2">배달 앱 라이더 배차 시스템</h1>
+            <p class="text-gray-500">객체지향프로그래밍(OOP) 다형성 시각화 과제</p>
+        </header>
+
+        <div class="bg-white p-6 rounded-xl shadow-md mb-10 flex flex-wrap gap-6 justify-center items-end border border-gray-100">
+            <div>
+                <label class="block text-sm font-semibold text-gray-600 mb-1">배달 거리 (km)</label>
+                <input type="number" id="distance" value="3" min="1" class="w-32 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
+            </div>
+            <div>
+                <label class="block text-sm font-semibold text-gray-600 mb-1">교통 상황</label>
+                <select id="traffic" class="w-40 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
+                    <option value="원활">원활</option>
+                    <option value="보통" selected>보통</option>
+                    <option value="혼잡">혼잡</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="mb-12">
+            <h2 class="text-xl font-bold text-center mb-6 text-gray-700">클래스 상속 구조 (Class Hierarchy)</h2>
+            
+            <div class="flex justify-center mb-6">
+                <div class="bg-slate-800 text-white px-8 py-4 rounded-xl shadow-lg border-b-4 border-slate-900 text-center w-64">
+                    <div class="text-sm text-slate-400 mb-1">&lt;&lt;Base Class&gt;&gt;</div>
+                    <div class="text-xl font-bold mb-2">Rider</div>
+                    <div class="text-xs text-slate-300 border-t border-slate-600 pt-2">
+                        + calculate_delivery_time()
+                    </div>
+                </div>
+            </div>
+
+            <div class="relative h-6 flex justify-center mb-6">
+                <div class="tree-connector absolute w-full"></div>
+            </div>
+
+            <div class="grid grid-cols-3 gap-6 relative">
+                <button onclick="dispatchRider('bicycle')" class="tree-line relative bg-white hover:bg-green-50 hover:-translate-y-1 transition-all duration-200 p-5 rounded-xl shadow-md border-2 border-transparent hover:border-green-400 text-center group cursor-pointer">
+                    <div class="text-4xl mb-3">🚲</div>
+                    <div class="font-bold text-lg text-gray-800">BicycleRider</div>
+                    <div class="text-sm text-gray-500 mb-3">(김배민)</div>
+                    <div class="text-xs bg-gray-100 text-gray-600 p-2 rounded text-left group-hover:bg-green-100 transition-colors">
+                        <strong>Override:</strong><br>거리 * 7분 (교통상황 무시)
+                    </div>
+                    <div class="mt-4 text-sm font-bold text-green-600 opacity-0 group-hover:opacity-100 transition-opacity">배차 요청하기 👆</div>
+                </button>
+
+                <button onclick="dispatchRider('motorcycle')" class="tree-line relative bg-white hover:bg-red-50 hover:-translate-y-1 transition-all duration-200 p-5 rounded-xl shadow-md border-2 border-transparent hover:border-red-400 text-center group cursor-pointer">
+                    <div class="text-4xl mb-3">🏍️</div>
+                    <div class="font-bold text-lg text-gray-800">MotorcycleRider</div>
+                    <div class="text-sm text-gray-500 mb-3">(박쿠팡)</div>
+                    <div class="text-xs bg-gray-100 text-gray-600 p-2 rounded text-left group-hover:bg-red-100 transition-colors">
+                        <strong>Override:</strong><br>거리 * 2분 + 교통상황 페널티
+                    </div>
+                    <div class="mt-4 text-sm font-bold text-red-600 opacity-0 group-hover:opacity-100 transition-opacity">배차 요청하기 👆</div>
+                </button>
+
+                <button onclick="dispatchRider('walkman')" class="tree-line relative bg-white hover:bg-orange-50 hover:-translate-y-1 transition-all duration-200 p-5 rounded-xl shadow-md border-2 border-transparent hover:border-orange-400 text-center group cursor-pointer">
+                    <div class="text-4xl mb-3">🚶</div>
+                    <div class="font-bold text-lg text-gray-800">WalkmanRider</div>
+                    <div class="text-sm text-gray-500 mb-3">(오배달)</div>
+                    <div class="text-xs bg-gray-100 text-gray-600 p-2 rounded text-left group-hover:bg-orange-100 transition-colors">
+                        <strong>Override:</strong><br>거리 * 20분 + 혼잡 시 지연
+                    </div>
+                    <div class="mt-4 text-sm font-bold text-orange-600 opacity-0 group-hover:opacity-100 transition-opacity">배차 요청하기 👆</div>
+                </button>
+            </div>
+        </div>
+
+        <div class="bg-gray-900 rounded-xl shadow-inner overflow-hidden">
+            <div class="bg-gray-800 px-4 py-2 flex items-center gap-2">
+                <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                <span class="text-gray-400 text-xs ml-2 font-mono">System Terminal (Polymorphism Output)</span>
+            </div>
+            <div id="logArea" class="p-4 h-64 overflow-y-auto font-mono text-sm text-gray-300 space-y-2">
+                <div class="text-green-400">&gt; 배달 앱 시스템이 초기화되었습니다. 캐릭터 카드를 클릭하여 배차를 요청해보세요.</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- OOP 설계 로직 구현 --- //
+        
+        // 부모 클래스 (Base Class)
+        class Rider {
+            constructor(name, vehicle) {
+                this.name = name;
+                this.vehicle = vehicle;
+            }
+            // 자식 클래스에서 오버라이딩 될 메서드
+            calculate_delivery_time(distance, traffic) {
+                return distance * 4;
+            }
+        }
+
+        // 자식 클래스 1: 자전거
+        class BicycleRider extends Rider {
+            constructor(name) { super(name, "자전거"); }
+            calculate_delivery_time(distance, traffic) {
+                addLog(`[${this.name} (${this.vehicle})] 자전거도로로 달려가는 중입니다! (교통상황 무시)`, 'text-green-300');
+                return distance * 7;
+            }
+        }
+
+        // 자식 클래스 2: 오토바이
+        class MotorcycleRider extends Rider {
+            constructor(name) { super(name, "오토바이"); }
+            calculate_delivery_time(distance, traffic) {
+                addLog(`[${this.name} (${this.vehicle})] 신호 준수하여 금방가겠습니다!`, 'text-red-300');
+                let base_time = distance * 2;
+                if (traffic === "혼잡") {
+                    addLog("   -> 도로가 혼잡합니다. 도착 예정시간이 지연됐습니다.", 'text-gray-400');
+                    return base_time + 15;
+                } else if (traffic === "원활") {
+                    return base_time;
+                } else {
+                    return base_time + 5;
+                }
+            }
+        }
+
+        // 자식 클래스 3: 도보
+        class Walkman extends Rider {
+            constructor(name) { super(name, "도보"); }
+            calculate_delivery_time(distance, traffic) {
+                addLog(`[${this.name} (${this.vehicle})] 다리로 걸어가겠습니다~ (일부 교통상황 무시)`, 'text-orange-300');
+                let walking_time = distance * 20;
+                if (traffic === "혼잡") {
+                    addLog("   -> 거리에 사람이 너무 많습니다. 도착 예정시간이 지연됐습니다.", 'text-gray-400');
+                    return walking_time + 15;
+                } else {
+                    return walking_time;
+                }
+            }
+        }
+
+        // --- 객체 인스턴스 생성 --- //
+        const riders = {
+            'bicycle': new BicycleRider("김배민"),
+            'motorcycle': new MotorcycleRider("박쿠팡"),
+            'walkman': new Walkman("오배달")
+        };
+
+        // --- UI 인터랙션 함수 --- //
+        function dispatchRider(type) {
+            // 현재 입력된 거리와 교통상황 가져오기
+            const distance = parseInt(document.getElementById('distance').value);
+            const traffic = document.getElementById('traffic').value;
+            
+            if(distance < 1 || isNaN(distance)) {
+                alert("올바른 거리를 입력해주세요.");
+                return;
+            }
+
+            const rider = riders[type];
+            
+            // 구분선 및 콜 정보 출력
+            addLog(`\n------------------------------------------------`, 'text-gray-600');
+            addLog(`[콜 발생] 배차 라이더: ${rider.name} | 거리: ${distance}km | 교통상황: '${traffic}'`, 'text-blue-300 font-bold');
+            
+            // 다형성(Polymorphism)의 핵심: 같은 메서드 이름(calculate_delivery_time)을 호출하지만 객체마다 다르게 동작함
+            const time = rider.calculate_delivery_time(distance, traffic);
+            
+            addLog(`   => 예상 소요 시간: ${time}분`, 'text-yellow-300 font-bold');
+        }
+
+        // 로그를 화면에 추가하고 맨 아래로 스크롤하는 헬퍼 함수
+        function addLog(message, colorClass = "text-gray-300") {
+            const logArea = document.getElementById('logArea');
+            const newLog = document.createElement('div');
+            newLog.className = colorClass;
+            newLog.textContent = '> ' + message;
+            logArea.appendChild(newLog);
+            logArea.scrollTop = logArea.scrollHeight; // 항상 최신 로그가 보이게 스크롤 내림
+        }
+    </script>
+</body>
+</html>
